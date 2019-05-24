@@ -13,10 +13,13 @@ for (el of process.argv.slice(2)) {
 let {
   rows = 5,
   cols = 5,
-  square = false,
   size,
-  list: [first = "toot", second = "clapping", center]
+  help = false,
+  list: [first = "toot", second = "clapping", center = first],
+  ...flags
 } = args;
+
+console.log(center);
 
 // default to size if passed
 [rows, cols] = (size && [size, size]) || [rows, cols];
@@ -38,24 +41,45 @@ const isCenter = (r, c) => {
 const maxDist = (r, c) =>
   Math.max(distToCenter(r, rows), distToCenter(c, cols));
 
-const getToken = (r, c) => {
-  if (isCenter(r, c)) {
-    return center || first;
-  } else if (
-    (square && maxDist(r, c) % 2 !== 0) ||
-    (!square && second && (r + c) % 2 !== 0)
-  ) {
-    return second;
-  } else {
-    return first;
-  }
+// hold supported patterns => function returning the token at r,c.
+const patterns = {
+  diag: (r, c) => {
+    if (isCenter(r, c)) {
+      return center;
+    } else if (second && (r + c) % 2 !== 0) {
+      return second;
+    } else {
+      return first;
+    }
+  },
+  square: (r, c) => {
+    if (isCenter(r, c)) {
+      return center;
+    } else if (maxDist(r, c) % 2 !== 0) {
+      return second;
+    } else {
+      return first;
+    }
+  },
+  lines: (r, c) =>
+    (isCenter(r, c) && center) || (r % 2 === 0 && second) || first,
+  cols: (r, c) => (isCenter(r, c) && center) || (c % 2 === 0 && second) || first
 };
+
+if (help) {
+  console.log(["Usage: ", ...[""].map(e => "  -" + e)].join("\n"));
+  process.exit();
+}
+
+const pattern =
+  Object.keys(patterns).filter(e => Object.keys(flags).indexOf(e) !== -1)[0] ||
+  "diag";
 
 const lines = [];
 for (r of Array(rows).keys()) {
   const out = [];
   for (c of Array(cols).keys()) {
-    out.push(getToken(r, c));
+    out.push(patterns[pattern](r, c));
   }
   lines.push(out);
 }
