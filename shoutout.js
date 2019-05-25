@@ -10,16 +10,17 @@ for (el of process.argv.slice(2)) {
   }
 }
 
+const DEFAULT_FIRST = "toot";
+const DEFAULT_SECOND = "clapping";
+
 let {
   rows = 5,
   cols = 5,
   size,
   help = false,
-  list: [first = "toot", second = "clapping", center = first],
+  list: [first = DEFAULT_FIRST, second = DEFAULT_SECOND, center = first] = [],
   ...flags
 } = args;
-
-console.log(center);
 
 // default to size if passed
 [rows, cols] = (size && [size, size]) || [rows, cols];
@@ -67,7 +68,19 @@ const patterns = {
 };
 
 if (help) {
-  console.log(["Usage: ", ...[""].map(e => "  -" + e)].join("\n"));
+  console.log(
+    [
+      "Usage: ",
+      ...[
+        `Pass a pattern (one of ${Object.keys(patterns)
+          .map(p => `--${p}`)
+          .join(", ")})`,
+        "Any non-flag options are considered tokens to output. In order: primary, alternate, center",
+        `The default tokens are: primary(${DEFAULT_FIRST}), alternate(${DEFAULT_SECOND}), center(${DEFAULT_FIRST})`,
+        "You may set the size with --size=[int], or with --rows and --cols for individual control"
+      ].map(e => "  - " + e)
+    ].join("\n")
+  );
   process.exit();
 }
 
