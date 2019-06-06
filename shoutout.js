@@ -1,17 +1,17 @@
-require("process");
+require('process');
 
 const args = {};
 for (el of process.argv.slice(2)) {
-  if (el.startsWith("--")) {
-    [name, num] = el.split("=");
+  if (el.startsWith('--')) {
+    [name, num] = el.split('=');
     args[name.slice(2)] = (num && parseInt(num)) || true;
   } else {
     args.list = [...(args.list || []), el];
   }
 }
 
-const DEFAULT_FIRST = "toot";
-const DEFAULT_SECOND = "clapping";
+const DEFAULT_FIRST = 'toot';
+const DEFAULT_SECOND = 'clapping';
 
 let {
   rows = 5,
@@ -40,7 +40,7 @@ const isCenter = (r, c) => {
 };
 
 const maxDist = (r, c) =>
-  Math.max(distToCenter(r, rows), distToCenter(c, cols));
+    Math.max(distToCenter(r, rows), distToCenter(c, cols));
 
 // hold supported patterns => function returning the token at r,c.
 const patterns = {
@@ -63,30 +63,27 @@ const patterns = {
     }
   },
   lines: (r, c) =>
-    (isCenter(r, c) && center) || (r % 2 === 0 && second) || first,
+      (isCenter(r, c) && center) || (r % 2 === 0 && second) || first,
   cols: (r, c) => (isCenter(r, c) && center) || (c % 2 === 0 && second) || first
 };
 
 if (help) {
-  console.log(
-    [
-      "Usage: ",
-      ...[
-        `Pass a pattern (one of ${Object.keys(patterns)
-          .map(p => `--${p}`)
-          .join(", ")})`,
-        "Any non-flag options are considered tokens to output. In order: primary, alternate, center",
-        `The default tokens are: primary(${DEFAULT_FIRST}), alternate(${DEFAULT_SECOND}), center(${DEFAULT_FIRST})`,
-        "You may set the size with --size=[int], or with --rows and --cols for individual control"
-      ].map(e => "  - " + e)
-    ].join("\n")
-  );
+  console.log([
+    'Usage: ',
+    ...[`Pass a pattern (one of ${
+            Object.keys(patterns).map(p => `--${p}`).join(', ')})`,
+        'Any non-flag options are considered tokens to output. In order: primary, alternate, center',
+        `The default tokens are: primary(${DEFAULT_FIRST}), alternate(${
+            DEFAULT_SECOND}), center(${DEFAULT_FIRST})`,
+        'You may set the size with --size=[int], or with --rows and --cols for individual control']
+        .map(e => '  - ' + e)
+  ].join('\n'));
   process.exit();
 }
 
 const pattern =
-  Object.keys(patterns).filter(e => Object.keys(flags).indexOf(e) !== -1)[0] ||
-  "diag";
+    Object.keys(patterns).filter(e => Object.keys(flags).includes(e))[0] ||
+    'square';
 
 const lines = [];
 for (r of Array(rows).keys()) {
@@ -98,5 +95,4 @@ for (r of Array(rows).keys()) {
 }
 
 process.stdout.write(
-  lines.map(row => row.map(el => `:${el}:`).join(" ")).join("\n")
-);
+    lines.map(row => row.map(el => `:${el}:`).join(' ')).join('\n'));
