@@ -18,6 +18,7 @@ let {
   cols = 5,
   size,
   help = false,
+  nocenter = false,
   list: [first = DEFAULT_FIRST, second = DEFAULT_SECOND, center = first] = [],
   ...flags
 } = args;
@@ -36,7 +37,7 @@ const isCenter = (r, c) => {
     let bounds = centerBounds(tot);
     return bounds[0] <= idx && idx <= bounds[1];
   };
-  return isMiddle(r, rows) && isMiddle(c, cols);
+  return !nocenter && isMiddle(r, rows) && isMiddle(c, cols);
 };
 
 const maxDist = (r, c) =>
@@ -70,7 +71,8 @@ if (help) {
           .join(", ")})`,
         "Any non-flag options are considered tokens to output. In order: primary, alternate, center",
         `The default tokens are: primary(${DEFAULT_FIRST}), alternate(${DEFAULT_SECOND}), center(${DEFAULT_FIRST})`,
-        "You may set the size with --size=[int], or with --rows and --cols for individual control"
+        "You may set the size with --size=[int], or with --rows and --cols for individual control",
+        `Pass --nocenter to disable center for all patterns.`
       ].map(e => "  - " + e)
     ].join("\n")
   );
