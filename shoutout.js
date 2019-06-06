@@ -23,6 +23,11 @@ let {
   ...flags
 } = args;
 
+const prn = x => {
+  console.log(x);
+  return x;
+};
+
 // default to size if passed
 [rows, cols] = (size && [size, size]) || [rows, cols];
 
@@ -43,6 +48,8 @@ const isCenter = (r, c) => {
 const maxDist = (r, c) =>
   Math.max(distToCenter(r, rows), distToCenter(c, cols));
 
+const saneMod = (x, n) => ((x % n) + n) % n;
+
 // hold supported patterns => function returning the token at r,c.
 const patterns = {
   diag: (r, c) =>
@@ -58,7 +65,11 @@ const patterns = {
   ttt: (r, c) =>
     (isCenter(r, c) && center) ||
     ((r % 2 === 1 || c % 2 === 1) && first) ||
-    second
+    second,
+  diag2: (r, c) =>
+    (isCenter(r, c) && center) ||
+    (Math.floor(saneMod(c - r, 4) / 2) === 0 && second) ||
+    first
 };
 
 if (help) {
