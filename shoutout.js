@@ -133,7 +133,7 @@ const macroFinders = patterns({
 
 // Create a tokenFinder which is parametrized per pattern differently. A bit
 // hacky.
-const parts = partition([...list, ...list], nocenter ? 2 : 3);
+const parts = partition(list, nocenter ? 2 : 3);
 const tokenFinders = _.fromPairs(passedPatterns.map((passedPattern, idx) => {
   const [first = DEFAULT_FIRST, second = DEFAULT_SECOND, center = first] =
       parts[idx] || [];
