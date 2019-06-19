@@ -74,19 +74,15 @@ const patterns = ({
       'parametrized vals must be truthy to allow for boolean logic');
   const isCenter = genIsCenter(noCenter, rows, cols);
   const maxDist = genMaxDist(rows, cols);
+  const ctr = f => (r, c) => (isCenter(r, c) && center) || f(r, c)
   return {
-    diag: (r, c) => (isCenter(r, c) && center) ||
-        (second && (r + c) % 2 !== 0 && second) || first,
-    square: (r, c) => (isCenter(r, c) && center) ||
-        (maxDist(r, c) % 2 !== 0 && second) || first,
-    lines: (r, c) =>
-        (isCenter(r, c) && center) || (r % 2 === 0 && second) || first,
-    columns: (r, c) =>
-        (isCenter(r, c) && center) || (c % 2 === 0 && second) || first,
-    ttt: (r, c) => (isCenter(r, c) && center) ||
-        ((r % 2 === 1 || c % 2 === 1) && first) || second,
-    diag2: (r, c) => (isCenter(r, c) && center) ||
-        (Math.floor(saneMod(c - r, 4) / 2) === 0 && second) || first
+    diag: ctr((r, c) => ((r + c) % 2 !== 0 && second) || first),
+    square: ctr((r, c) => (maxDist(r, c) % 2 !== 0 && second) || first),
+    lines: ctr((r, c) => (r % 2 === 0 && second) || first),
+    columns: ctr((r, c) => (c % 2 === 0 && second) || first),
+    ttt: ctr((r, c) => ((r % 2 === 1 || c % 2 === 1) && first) || second),
+    diag2: ctr(
+        (r, c) => (Math.floor(saneMod(c - r, 4) / 2) === 0 && second) || first)
   };
 };
 
