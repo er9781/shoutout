@@ -2,6 +2,7 @@ require('process');
 const _ = require('lodash');
 const assert = require('assert');
 
+// TODO switch to Map to have ordered dict
 const args = {};
 for (el of process.argv.slice(2)) {
   if (el.startsWith('--')) {
@@ -129,7 +130,7 @@ const macroFinders = patterns({
 
 // Create a tokenFinder which is parametrized per pattern differently. A bit
 // hacky.
-const parts = partition(list, nocenter ? 2 : 3);
+const parts = partition([...list, ...list], nocenter ? 2 : 3);
 const tokenFinders = _.fromPairs(passedPatterns.map((passedPattern, idx) => {
   const [first = DEFAULT_FIRST, second = DEFAULT_SECOND, center = first] =
       parts[idx] || [];
